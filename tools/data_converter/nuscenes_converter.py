@@ -5,13 +5,14 @@ from os import path as osp
 from typing import List, Tuple, Union
 
 import mmcv
+import mmengine
 import numpy as np
 from nuscenes.nuscenes import NuScenes
 from nuscenes.utils.geometry_utils import view_points
 from pyquaternion import Quaternion
 from shapely.geometry import MultiPoint, box
 
-from mmdet3d.core.bbox import points_cam2img
+from mmdet3d.structures import points_cam2img
 from mmdet3d.datasets import NuScenesDataset
 
 nus_categories = ('car', 'truck', 'trailer', 'bus', 'construction_vehicle',
@@ -89,18 +90,18 @@ def create_nuscenes_infos(root_path,
         data = dict(infos=train_nusc_infos, metadata=metadata)
         info_path = osp.join(root_path,
                              '{}_temporal_infos_test.pkl'.format(info_prefix))
-        mmcv.dump(data, info_path)
+        mmengine.dump(data, info_path)
     else:
         print('train sample: {}, val sample: {}'.format(
             len(train_nusc_infos), len(val_nusc_infos)))
         data = dict(infos=train_nusc_infos, metadata=metadata)
         info_path = osp.join(root_path,
                              '{}_temporal_infos_train.pkl'.format(info_prefix))
-        mmcv.dump(data, info_path)
+        mmengine.dump(data, info_path)
         data['infos'] = val_nusc_infos
         info_val_path = osp.join(root_path,
                                  '{}_temporal_infos_val.pkl'.format(info_prefix))
-        mmcv.dump(data, info_val_path)
+        mmengine.dump(data, info_val_path)
 
 
 def get_available_scenes(nusc):
@@ -132,7 +133,7 @@ def get_available_scenes(nusc):
                 # path from lyftdataset is absolute path
                 lidar_path = lidar_path.split(f'{os.getcwd()}/')[-1]
                 # relative path
-            if not mmcv.is_filepath(lidar_path):
+            if not mmengine.utils.is_filepath(lidar_path):
                 scene_not_exist = True
                 break
             else:
@@ -165,7 +166,7 @@ def _fill_trainval_infos(nusc,
     train_nusc_infos = []
     val_nusc_infos = []
     frame_idx = 0
-    for sample in mmcv.track_iter_progress(nusc.sample):
+    for sample in mmengine.utils.track_iter_progress(nusc.sample):
         lidar_token = sample['data']['LIDAR_TOP']
         sd_rec = nusc.get('sample_data', sample['data']['LIDAR_TOP'])
         cs_record = nusc.get('calibrated_sensor',
@@ -173,7 +174,7 @@ def _fill_trainval_infos(nusc,
         pose_record = nusc.get('ego_pose', sd_rec['ego_pose_token'])
         lidar_path, boxes, _ = nusc.get_sample_data(lidar_token)
 
-        mmcv.check_file_exist(lidar_path)
+        mmengine.utils.check_file_exist(lidar_path)
 
 
         info = {

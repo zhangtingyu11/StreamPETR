@@ -13,8 +13,8 @@ import os
 import time
 import torch
 import warnings
-from mmcv import Config, DictAction
-from mmcv.runner import get_dist_info, init_dist, wrap_fp16_model
+from mmengine import Config, DictAction
+from mmengine.dist import get_dist_info, init_dist
 from os import path as osp
 
 from mmdet import __version__ as mmdet_version
@@ -76,7 +76,7 @@ def parse_args():
         choices=['none', 'pytorch', 'slurm', 'mpi'],
         default='none',
         help='job launcher')
-    parser.add_argument('--local_rank', type=int, default=0)
+    parser.add_argument('--local-rank', type=int, default=0)
     parser.add_argument(
         '--autoscale-lr',
         action='store_true',
