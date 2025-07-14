@@ -82,12 +82,12 @@ class GridMask(nn.Module):
         self.prob = self.st_prob * epoch / max_epoch #+ 1.#0.5
 
     def forward(self, x):
-        if np.random.rand() > self.prob or not self.training:
+        if np.random.rand() > self.prob or not self.training:   # 在测试阶段不做gridMask, 在测试阶段有30%的概率不做gridMask
             return x
         n,c,h,w = x.size()
-        x = x.view(-1,h,w)
-        hh = int(1.5*h)
-        ww = int(1.5*w)
+        x = x.view(-1,h,w)  # 将图片张数和通道进行合并
+        hh = int(1.5*h) # 高变成1.5倍
+        ww = int(1.5*w) # 宽变成1.5倍
         d = np.random.randint(2, h)
         self.l = min(max(int(d*self.ratio+0.5),1),d-1)
         mask = np.ones((hh, ww), np.float32)

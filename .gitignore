@@ -5,3 +5,4 @@ ckpts
 data
 __pycache__
 test
+*.onnx

@@ -4,6 +4,7 @@
 # Modified from mmdetection (https://github.com/open-mmlab/mmdetection)
 # Copyright (c) OpenMMLab. All rights reserved.
 # ------------------------------------------------------------------------
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn import ConvModule

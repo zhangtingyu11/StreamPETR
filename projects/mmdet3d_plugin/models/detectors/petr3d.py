@@ -64,16 +64,16 @@ class Petr3D(MVXTwoStageDetector):
 
     def extract_img_feat(self, img, len_queue=1, training_mode=False):
         """Extract features of images."""
-        B = img.size(0)
+        B = img.size(0) # batch_size
 
         if img is not None:
             if img.dim() == 6:
-                img = img.flatten(1, 2)
+                img = img.flatten(1, 2)     # 将时序和图像数量维度展平
             if img.dim() == 5 and img.size(0) == 1:
                 img.squeeze_()
             elif img.dim() == 5 and img.size(0) > 1:
-                B, N, C, H, W = img.size()
-                img = img.reshape(B * N, C, H, W)
+                B, N, C, H, W = img.size()  # N = 图片张数 = 时序数 * 一个时序的图片张数
+                img = img.reshape(B * N, C, H, W)   # 将batch_size和图片张数合并
             if self.use_grid_mask:
                 img = self.grid_mask(img)
 
@@ -257,9 +257,11 @@ class Petr3D(MVXTwoStageDetector):
 
         T = data['img'].size(1)
 
+        # 之前的图片
         prev_img = data['img'][:, :-self.num_frame_backbone_grads]
+        # 当前图片
         rec_img = data['img'][:, -self.num_frame_backbone_grads:]
-        rec_img_feats = self.extract_feat(rec_img, self.num_frame_backbone_grads)
+        rec_img_feats = self.extract_feat(rec_img, self.num_frame_backbone_grads)   # 提取当前图片的特征
 
         if T-self.num_frame_backbone_grads > 0:
             self.eval()
